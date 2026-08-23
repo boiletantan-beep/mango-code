@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>القاموس البسيط | Arabic - English Dictionary</title>
+  
+  <!-- Google Fonts: Cairo (Arabic) & Inter (English) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for clean icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-emerald: #10b981;
+      --accent-emerald-hover: #059669;
+      --accent-cyan: #06b6d4;
+      --border-color: #334155;
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --font-ar: 'Cairo', system-ui, sans-serif;
+      --font-en: 'Inter', system-ui, sans-serif;
+    }
+
+    [data-theme='light'] {
+      --bg-primary: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-input: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-emerald: #059669;
+      --accent-emerald-hover: #047857;
+      --accent-cyan: #0284c7;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-ar);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem;
+      line-height: 1.6;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Header */
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.5rem;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(135deg, var(--accent-emerald), var(--accent-cyan));
+      color: #fff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    .logo-text h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .logo-text p {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+
+    .theme-toggle-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.65rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--accent-emerald);
+      color: var(--accent-emerald);
+    }
+
+    /* Direction Bar */
+    .direction-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius-md);
+    }
+
+    .lang-pill {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--accent-emerald);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .swap-btn {
+      background: var(--bg-input);
+      border: none;
+      color: var(--text-main);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.3s ease, background-color 0.2s;
+    }
+
+    .swap-btn:hover {
+      transform: rotate(180deg);
+      background: var(--accent-emerald);
+      color: #fff;
+    }
+
+    /* Search Box */
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1.1rem 3.2rem 1.1rem 3.2rem;
+      font-size: 1.15rem;
+      font-family: inherit;
+      background-color: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      color: var(--text-main);
+      box-shadow: var(--shadow-sm);
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-emerald);
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
+    }
+
+    .search-icon-right {
+      position: absolute;
+      right: 1.1rem;
+      color: var(--text-muted);
+      pointer-events: none;
+      font-size: 1.1rem;
+    }
+
+    .clear-btn-left {
+      position: absolute;
+      left: 1.1rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      padding: 0.3rem;
+      border-radius: 50%;
+      font-size: 1.1rem;
+    }
+
+    .clear-btn-left:hover {
+      color: var(--text-main);
+      background: var(--bg-input);
+    }
+
+    /* Quick Search Tags */
+    .quick-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .quick-tags span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .tag-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .tag-btn:hover {
+      border-color: var(--accent-emerald);
+      color: var(--accent-emerald);
+    }
+
+    /* Result Card */
+    .result-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .result-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-emerald), var(--accent-cyan));
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .main-word-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .word-ar {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--accent-emerald);
+    }
+
+    .word-en {
+      font-size: 1.5rem;
+      font-weight: 700;
+      font-family: var(--font-en);
+      color: var(--text-main);
+    }
+
+    .phonetic-badge {
+      font-family: var(--font-en);
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      background: var(--bg-input);
+      padding: 0.15rem 0.6rem;
+      border-radius: 6px;
+      width: fit-content;
+      margin-top: 0.2rem;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .action-btn:hover {
+      background: var(--accent-emerald);
+      border-color: var(--accent-emerald);
+      color: #fff;
+    }
+
+    .word-type-badge {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--accent-emerald);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.825rem;
+      font-weight: 700;
+      width: fit-content;
+    }
+
+    .example-box {
+      background: var(--bg-input);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      border-right: 4px solid var(--accent-emerald);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .example-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .example-ar {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .example-en {
+      font-size: 0.95rem;
+      font-family: var(--font-en);
+      color: var(--text-muted);
+    }
+
+    .synonyms-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+    }
+
+    .synonyms-title {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .synonym-chip {
+      background: var(--bg-input);
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      color: var(--text-main);
+      font-family: var(--font-en);
+    }
+
+    /* History Section */
+    .history-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .history-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.6rem;
+    }
+
+    .history-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 0.6rem 0.8rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .history-card:hover {
+      border-color: var(--accent-emerald);
+    }
+
+    .history-ar {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .history-en {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--font-en);
+    }
+
+    /* Toast Message */
+    .toast-msg {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent-emerald);
+      color: #fff;
+      padding: 0.6rem 1.4rem;
+      border-radius: 30px;
+      font-weight: 700;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      animation: popUp 0.3s ease-out;
+      z-index: 100;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popUp {
+      from { opacity: 0; transform: translate(-50%, 20px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+        <div class="logo-text">
+          <h1>القاموس البسيط</h1>
+          <p>ترجمة فورية ونطق صوتي حي</p>
+        </div>
+      </div>
+
+      <button class="theme-toggle-btn" id="themeToggleBtn" title="تغيير المظهر">
+        <i class="fa-solid fa-sun" id="themeIcon"></i>
+      </button>
+    </header>
+
+    <!-- Direction Switcher -->
+    <div class="direction-bar">
+      <div class="lang-pill" id="directionLabel">
+        العربية ➔ الإنجليزية
+      </div>
+      <button class="swap-btn" id="swapBtn" title="تبديل لغة الترجمة">
+        <i class="fa-solid fa-right-left"></i>
+      </button>
+    </div>
+
+    <!-- Search Input -->
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass search-icon-right"></i>
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="اكتب كلمة بالعربية..."
+        autocomplete="off"
+        autofocus
+      />
+      <button class="clear-btn-left" id="clearBtn" style="display: none;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Quick Suggestions -->
+    <div class="quick-tags">
+      <span>كلمات شائعة:</span>
+      <button class="tag-btn" onclick="searchTag('مرحبا')">مرحبا</button>
+      <button class="tag-btn" onclick="searchTag('شكرا')">شكرا</button>
+      <button class="tag-btn" onclick="searchTag('كتاب')">كتاب</button>
+      <button class="tag-btn" onclick="searchTag('سعادة')">سعادة</button>
+      <button class="tag-btn" onclick="searchTag('حب')">حب</button>
+      <button class="tag-btn" onclick="searchTag('Water')">Water</button>
+      <button class="tag-btn" onclick="searchTag('Travel')">Travel</button>
+      <button class="tag-btn" onclick="searchTag('Success')">Success</button>
+    </div>
+
+    <!-- Translation Result Container -->
+    <div id="resultCard" class="result-card">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- History Section -->
+    <div className="history-section" id="historySection">
+      <div class="section-title">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>آخر الكلمات المترجمة</span>
+      </div>
+      <div class="history-grid" id="historyGrid">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast-msg" style="display: none;"></div>
+
+  <script>
+    // Dictionary Database
+    const dictionaryDb = [
+      { id: "1", ar: "مرحبا", en: "Hello", phonetic: "/həˈloʊ/", type: "عبارة (Interjection)", exampleAr: "مرحباً، كيف حالك اليوم؟", exampleEn: "Hello, how are you today?", synonyms: ["Hi", "Greetings"] },
+      { id: "2", ar: "شكرا", en: "Thank you", phonetic: "/θæŋk juː/", type: "عبارة (Phrase)", exampleAr: "شكراً لك على مساعدتك القيمة.", exampleEn: "Thank you for your valuable help.", synonyms: ["Thanks", "Appreciated"] },
+      { id: "3", ar: "من فضلك", en: "Please", phonetic: "/pliːz/", type: "ظرف (Adverb)", exampleAr: "هل يمكنك مساعدتي من فضلك؟", exampleEn: "Could you please help me?", synonyms: ["Kindly"] },
+      { id: "4", ar: "ماء", en: "Water", phonetic: "/ˈwɔː.tər/", type: "اسم (Noun)", exampleAr: "أحتاج إلى شرب كوب من الماء.", exampleEn: "I need to drink a glass of water.", synonyms: ["Aqua", "Liquid"] },
+      { id: "5", ar: "كتاب", en: "Book", phonetic: "/bʊk/", type: "اسم (Noun)", exampleAr: "أنا أقرأ كتاباً ممتعاً عن التاريخ.", exampleEn: "I am reading an interesting book about history.", synonyms: ["Novel", "Volume"] },
+      { id: "6", ar: "مدرسة", en: "School", phonetic: "/skuːl/", type: "اسم (Noun)", exampleAr: "يذهب الأطفال إلى المدرسة كل صباح.", exampleEn: "Children go to school every morning.", synonyms: ["Academy"] },
+      { id: "7", ar: "سعادة", en: "Happiness", phonetic: "/ˈhæp.i.nəs/", type: "اسم (Noun)", exampleAr: "السعادة تأتي من القناعة والرضا.", exampleEn: "Happiness comes from contentment.", synonyms: ["Joy", "Delight"] },
+      { id: "8", ar: "جميل", en: "Beautiful", phonetic: "/ˈbjuː.tɪ.fəl/", type: "صفة (Adjective)", exampleAr: "هذا الجو جميل جدا اليوم.", exampleEn: "The weather is very beautiful today.", synonyms: ["Pretty", "Lovely"] },
+      { id: "9", ar: "عمل", en: "Work", phonetic: "/wɜːrk/", type: "اسم / فعل (Noun/Verb)", exampleAr: "أنا أعمل في شركة تقنية.", exampleEn: "I work at a technology company.", synonyms: ["Job", "Labor"] },
+      { id: "10", ar: "صديق", en: "Friend", phonetic: "/frɛnd/", type: "اسم (Noun)", exampleAr: "الصديق المخلص كنز لا يقدر بثمن.", exampleEn: "A loyal friend is a priceless treasure.", synonyms: ["Companion", "Buddy"] },
+      { id: "11", ar: "طعام", en: "Food", phonetic: "/fuːd/", type: "اسم (Noun)", exampleAr: "هذا الطعام لديد ودافئ.", exampleEn: "This food is delicious and warm.", synonyms: ["Meal", "Cuisine"] },
+      { id: "12", ar: "سفر", en: "Travel", phonetic: "/ˈtræv.əl/", type: "فعل / اسم (Verb/Noun)", exampleAr: "أحب السفر واكتشاف ثقافات جديدة.", exampleEn: "I love to travel and discover new cultures.", synonyms: ["Journey", "Trip"] },
+      { id: "13", ar: "وقت", en: "Time", phonetic: "/taɪm/", type: "اسم (Noun)", exampleAr: "الوقت كالسيف إن لم تقطعه قطعك.", exampleEn: "Time is money, make good use of it.", synonyms: ["Duration", "Moment"] },
+      { id: "14", ar: "شمس", en: "Sun", phonetic: "/sʌn/", type: "اسم (Noun)", exampleAr: "تشرق الشمس من الشرق.", exampleEn: "The sun rises in the east.", synonyms: ["Sunshine"] },
+      { id: "15", ar: "قمر", en: "Moon", phonetic: "/muːn/", type: "اسم (Noun)", exampleAr: "القمر يضيء السماء في الليل.", exampleEn: "The moon illuminates the sky at night.", synonyms: ["Lunar body"] },
+      { id: "16", ar: "بيت", en: "House", phonetic: "/haʊs/", type: "اسم (Noun)", exampleAr: "نعيش في بيت واسع وجميل.", exampleEn: "We live in a spacious and beautiful house.", synonyms: ["Home", "Residence"] },
+      { id: "17", ar: "عائلة", en: "Family", phonetic: "/ˈfæm.əl.i/", type: "اسم (Noun)", exampleAr: "العائلة هي أهم شيء في الحياة.", exampleEn: "Family is the most important thing in life.", synonyms: ["Relatives"] },
+      { id: "18", ar: "نجاح", en: "Success", phonetic: "/səkˈsɛs/", type: "اسم (Noun)", exampleAr: "العمل الجاد هو مفتاح النجاح.", exampleEn: "Hard work is the key to success.", synonyms: ["Achievement", "Triumph"] },
+      { id: "19", ar: "حلم", en: "Dream", phonetic: "/driːm/", type: "اسم / فعل (Noun/Verb)", exampleAr: "لا تتوقف أبداً عن السعي وراء حلمك.", exampleEn: "Never stop chasing your dream.", synonyms: ["Aspiration", "Goal"] },
+      { id: "20", ar: "حب", en: "Love", phonetic: "/lʌv/", type: "اسم / فعل (Noun/Verb)", exampleAr: "الحب ينشر السلام والمودة.", exampleEn: "Love spreads peace and affection.", synonyms: ["Affection", "Care"] }
+    ];
+
+    // State Variables
+    let direction = 'ar-en'; // 'ar-en' or 'en-ar'
+    let currentTheme = localStorage.getItem('mango_theme') || 'dark';
+    let history = JSON.parse(localStorage.getItem('mango_history') || '[{"ar":"سعادة","en":"Happiness"},{"ar":"مرحبا","en":"Hello"},{"ar":"كتاب","en":"Book"}]');
+
+    // DOM Elements
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const swapBtn = document.getElementById('swapBtn');
+    const directionLabel = document.getElementById('directionLabel');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const resultCard = document.getElementById('resultCard');
+    const historyGrid = document.getElementById('historyGrid');
+    const toast = document.getElementById('toast');
+
+    // Initialize
+    function init() {
+      // Set initial theme
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      updateThemeIcon();
+
+      // Render History
+      renderHistory();
+
+      // Default Search "مرحبا"
+      searchInput.value = 'مرحبا';
+      clearBtn.style.display = 'flex';
+      performSearch('مرحبا');
+    }
+
+    // Theme Toggle
+    themeToggleBtn.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      localStorage.setItem('mango_theme', currentTheme);
+      updateThemeIcon();
+    });
+
+    function updateThemeIcon() {
+      themeIcon.className = currentTheme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    }
+
+    // Direction Swap
+    swapBtn.addEventListener('click', () => {
+      direction = direction === 'ar-en' ? 'en-ar' : 'ar-en';
+      if (direction === 'ar-en') {
+        directionLabel.textContent = 'العربية ➔ الإنجليزية';
+        searchInput.placeholder = 'اكتب كلمة بالعربية...';
+        searchInput.dir = 'rtl';
+      } else {
+        directionLabel.textContent = 'English ➔ العربية';
+        searchInput.placeholder = 'Type a word in English...';
+        searchInput.dir = 'ltr';
+      }
+      if (searchInput.value) performSearch(searchInput.value);
+    });
+
+    // Input Search Events
+    searchInput.addEventListener('input', (e) => {
+      const val = e.target.value;
+      clearBtn.style.display = val ? 'flex' : 'none';
+      performSearch(val);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      clearBtn.style.display = 'none';
+      resultCard.style.display = 'none';
+      searchInput.focus();
+    });
+
+    // Quick tag search
+    window.searchTag = function(word) {
+      searchInput.value = word;
+      clearBtn.style.display = 'flex';
+      performSearch(word);
+    };
+
+    // Perform Lookup
+    function performSearch(query) {
+      if (!query || !query.trim()) {
+        resultCard.style.display = 'none';
+        return;
+      }
+
+      const q = query.trim().toLowerCase();
+      
+      // Match from database
+      let match = dictionaryDb.find(item => 
+        item.ar.toLowerCase() === q || item.en.toLowerCase() === q
+      );
+
+      if (!match) {
+        match = dictionaryDb.find(item => 
+          item.ar.toLowerCase().includes(q) || item.en.toLowerCase().includes(q)
+        );
+      }
+
+      let resData;
+      if (match) {
+        resData = match;
+      } else {
+        const isAr = /[\u0600-\u06FF]/.test(query);
+        resData = {
+          ar: isAr ? query : `ترجمة الكلمة: ${query}`,
+          en: isAr ? `Translation of ${query}` : query,
+          phonetic: isAr ? "/.../" : `/${q}/`,
+          type: "ترجمة مباشرة",
+          exampleAr: isAr ? `مثال على الكلمة "${query}".` : `كيفية استخدام "${query}" باللغة العربية.`,
+          exampleEn: isAr ? `Example using the term "${query}".` : `Usage of "${query}" in a sentence.`,
+          synonyms: []
+        };
+      }
+
+      renderResult(resData);
+      addToHistory(resData.ar, resData.en);
+    }
+
+    // Render Result Card
+    function renderResult(item) {
+      resultCard.style.display = 'flex';
+      resultCard.innerHTML = `
+        <div class="result-header">
+          <div class="main-word-group">
+            <div class="word-ar">${item.ar}</div>
+            <div class="word-en">${item.en}</div>
+            ${item.phonetic ? `<div class="phonetic-badge">${item.phonetic}</div>` : ''}
+          </div>
+
+          <div class="card-actions">
+            <button class="action-btn" onclick="playAudio('${item.en.replace(/'/g, "\\'")}')" title="استمع للنطق">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+            <button class="action-btn" onclick="copyText('${item.ar} = ${item.en}')" title="نسخ الترجمة">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        ${item.type ? `<div class="word-type-badge">${item.type}</div>` : ''}
+
+        ${item.exampleAr || item.exampleEn ? `
+          <div class="example-box">
+            <span class="example-title">مثال توضيحي:</span>
+            <p class="example-ar">${item.exampleAr}</p>
+            <p class="example-en">${item.exampleEn}</p>
+          </div>
+        ` : ''}
+
+        ${item.synonyms && item.synonyms.length ? `
+          <div class="synonyms-group">
+            <span class="synonyms-title">مرادفات:</span>
+            ${item.synonyms.map(s => `<span class="synonym-chip">${s}</span>`).join('')}
+          </div>
+        ` : ''}
+      `;
+    }
+
+    // Audio Playback
+    window.playAudio = function(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+        showToast('🔊 نطق الكلمة بالإنجليزي...');
+      } else {
+        showToast('خاصية الصوت غير مدعومة في متصفحك');
+      }
+    };
+
+    // Copy to Clipboard
+    window.copyText = function(text) {
+      navigator.clipboard.writeText(text);
+      showToast('📋 تم نسخ النص بنجاح!');
+    };
+
+    // Show Toast
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2000);
+    }
+
+    // History Functions
+    function addToHistory(ar, en) {
+      const filtered = history.filter(h => h.ar !== ar && h.en !== en);
+      history = [{ ar, en }, ...filtered].slice(0, 8);
+      localStorage.setItem('mango_history', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      historyGrid.innerHTML = history.map(h => `
+        <div class="history-card" onclick="searchTag('${h.ar}')">
+          <span class="history-ar">${h.ar}</span>
+          <span class="history-en">${h.en}</span>
+        </div>
+      `).join('');
+    }
+
+    // Start App
+    init();
+  </script>
+</body>
+</html>
